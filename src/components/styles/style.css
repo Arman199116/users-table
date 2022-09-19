@@ -1,0 +1,22 @@
+.users-table tr{
+    border: 1px solid black;
+}
+
+.users-table-row td{
+    border: 1px solid black;
+}
+
+.table-headers {
+   
+}
+
+.id-icon-dir-top::before {
+    content: "\25B2";
+    color: black;
+    display: inline-block;
+    margin-right: 6px;
+}
+
+.id-icon-dir-down::before {
+    transform: rotate(180deg);
+}

@@ -20,3 +20,8 @@ th {
 .id-icon-dir-down::before {
     transform: rotate(180deg);
 }
+
+.current-user {
+    display: flex;
+    flex-direction: column;
+}

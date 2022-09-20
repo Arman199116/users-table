@@ -1,17 +1,20 @@
 import React from 'react';
-import { useDispatch } from "react-redux";
-import {showCurrentUser} from './../redux/stor'
-import { IUser } from "./../model";
-import { ITable } from "./../model";
+import { useDispatch, useSelector } from "react-redux";
+import {showCurrentUser, selectCurrentUser} from './../redux/stor'
+import { ITable, IUser } from "./../model";
 
 
 const TableBody : React.FC<ITable> = ({sortedData , isLoading} ) => {
     let dispatch = useDispatch();
+    const prevUser : IUser = useSelector(selectCurrentUser);
     if (isLoading) {
         return <div>Loading...</div>
     }
+
     let handleShow = (user : IUser) => {
-        dispatch(showCurrentUser({type : 'SHOW', user : user, show : true}));
+        if (prevUser.id !== user.id) {
+            dispatch(showCurrentUser({type : 'SHOW', user : user, show : true}));
+        }
     }
     return (
         <tbody>
@@ -24,7 +27,7 @@ const TableBody : React.FC<ITable> = ({sortedData , isLoading} ) => {
                         <td>{user.email}</td>
                         <td>{user.phone}</td>
                     </tr>
-                )) 
+                ))
             }
         </tbody>
     )

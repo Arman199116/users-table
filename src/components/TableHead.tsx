@@ -6,7 +6,7 @@ const TableHead : React.FC<ITHead> = ({sortById, searchByColumn}) => {
         <thead>
             <tr >
                 <th className="table-headers">
-                    <p onClick={e => sortById(e) } className="id-icon-dir-top" >Id</p>
+                    <p onClick={e => sortById(e)} className="id-icon-dir-top" >Id</p>
                     <input onChange={e => searchByColumn(e)} data-userinfo='id' type="text" placeholder="Search by .." />
                 </th>
                 <th className="table-headers">

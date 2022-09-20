@@ -13,7 +13,7 @@ const Pagination : React.FC<IPagin> = ({nPages, currentPage, setCurrentPage}) =>
     }
     return (
         <nav>
-            <ul className="pagination justify-content-center">
+            <ul className="pagination justify-content-center mt-6">
                 <li className="page-item">
                     <a className="page-link" 
                         onClick={e => prevPage()}
@@ -47,4 +47,4 @@ const Pagination : React.FC<IPagin> = ({nPages, currentPage, setCurrentPage}) =>
     )
 }
 
-export default Pagination
+export default React.memo(Pagination);

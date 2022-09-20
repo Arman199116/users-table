@@ -1,17 +1,13 @@
-import React, { useEffect, useMemo, useState } from 'react';
-import { useSelector } from "react-redux";
-import { selectShow, selectCurrentUser } from "./../redux/stor";
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import "./styles/style.css";
 import { data } from "./../data/data";
 import { IUser } from "./../model";
 import TableBodys from './TableBody';
 import TableHeader from './TableHead';
 import Pagination from './Pagination';
+import CurrentUser from './CurrentUser';
 
 const UsersTable : React.FC = () => {
-    // show current user
-    const show : boolean = useSelector(selectShow);
-	const user : IUser = useSelector(selectCurrentUser);
 
     // pagination states
     const [currentPage, setCurrentPage] = useState<number>(1);
@@ -24,25 +20,24 @@ const UsersTable : React.FC = () => {
     let TableHead = useMemo(() => TableHeader, []);
     let TableBody = useMemo(() => TableBodys, []);
 
-    // sort and search functions states
     const [sortedData, setSortedData] = useState<IUser[]>(currentRecords);
     useEffect(() => {
         setSortedData(currentRecords);
-        
+        sortById();
     }, [currentPage])
-    
+
     const [sortByDesc, setSortByDesc] = useState<boolean>(true);
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
-
-    let sortById = (e? : React.MouseEvent) : void => {
+    let sortById = useCallback((e? : React.MouseEvent) : void => {
         const clickedEl = e?.target as HTMLTableCellElement;
-        setSortedData([...sortedData.sort((a : IUser , b : IUser) => sortByDesc ? a.id - b.id : b.id - a.id )]);
-        setSortByDesc(prev => !prev);
+        setSortedData([...currentRecords.sort((a : IUser , b : IUser) => sortByDesc ? a.id - b.id : b.id - a.id )]);
+        setSortByDesc(!sortByDesc);
         clickedEl?.classList.toggle('id-icon-dir-down');
-    };
 
-    let searchByColumn = (e : React.ChangeEvent) : void => {
+    },[sortByDesc]);
+
+    let searchByColumn = useCallback((e : React.ChangeEvent) : void => {
         setIsLoading(true);
         const changedEl = e.target as HTMLInputElement;
 
@@ -59,9 +54,6 @@ const UsersTable : React.FC = () => {
             }
         }
         setIsLoading(false);
-    };
-    useEffect(() => {
-        sortById();
     }, []);
 
     return (
@@ -75,7 +67,7 @@ const UsersTable : React.FC = () => {
                     <TableBody sortedData={sortedData} isLoading={isLoading} />
                 }
             </table>
-            {show && <div>dtgyhjfg {user?.lastName}</div>}
+            <CurrentUser />
             <Pagination
                 nPages = { nPages }
                 currentPage = { currentPage } 

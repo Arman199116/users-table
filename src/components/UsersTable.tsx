@@ -1,84 +1,86 @@
-import React, { useEffect, useRef, useState, useCallback } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
+import { useSelector } from "react-redux";
+import { selectShow, selectCurrentUser } from "./../redux/stor";
 import "./styles/style.css";
 import { data } from "./../data/data";
 import { IUser } from "./../model";
+import TableBodys from './TableBody';
+import TableHeader from './TableHead';
+import Pagination from './Pagination';
 
 const UsersTable : React.FC = () => {
+    // show current user
+    const show : boolean = useSelector(selectShow);
+	const user : IUser = useSelector(selectCurrentUser);
 
-    const [sortedData, setSortedData] = useState<IUser[]>(data);
+    // pagination states
+    const [currentPage, setCurrentPage] = useState<number>(1);
+    const [recordsPerPage] = useState<number>(7);
+    const indexOfLastRecord = currentPage * recordsPerPage;
+    const indexOfFirstRecord = indexOfLastRecord - recordsPerPage;
+    const nPages = Math.ceil(data.length / recordsPerPage);
+    const currentRecords : IUser[] = data.slice(indexOfFirstRecord, indexOfLastRecord);
+
+    let TableHead = useMemo(() => TableHeader, []);
+    let TableBody = useMemo(() => TableBodys, []);
+
+    // sort and search functions states
+    const [sortedData, setSortedData] = useState<IUser[]>(currentRecords);
+    useEffect(() => {
+        setSortedData(currentRecords);
+        
+    }, [currentPage])
+    
     const [sortByDesc, setSortByDesc] = useState<boolean>(true);
+    const [isLoading, setIsLoading] = useState<boolean>(false);
+
 
     let sortById = (e? : React.MouseEvent) : void => {
         const clickedEl = e?.target as HTMLTableCellElement;
-        setSortedData(sortedData.sort((a : IUser , b : IUser) => sortByDesc ? a.id - b.id : b.id - a.id ));
+        setSortedData([...sortedData.sort((a : IUser , b : IUser) => sortByDesc ? a.id - b.id : b.id - a.id )]);
         setSortByDesc(prev => !prev);
         clickedEl?.classList.toggle('id-icon-dir-down');
-    }
+    };
 
     let searchByColumn = (e : React.ChangeEvent) : void => {
+        setIsLoading(true);
         const changedEl = e.target as HTMLInputElement;
 
         let searchedInput : string = changedEl.value?.trim().toLowerCase();
         let getByColumn : string = changedEl.dataset['userinfo'] || '';
 
         if (searchedInput) {
-            //console.log(sortedData[0][getByColumn as keyof typeof sortedData[0]]);
-            console.log(searchedInput);
             if (searchedInput.length <= 1) {
-                setSortedData(data)
+                setSortedData(currentRecords)
             } else {
-                setSortedData([...sortedData.filter((user : IUser) => {
+                setSortedData([...currentRecords.filter((user : IUser) => {
                     return user[getByColumn as keyof typeof user].toString().toLowerCase().indexOf(searchedInput) >= 0
                 })]);
             }
         }
-    }
+        setIsLoading(false);
+    };
     useEffect(() => {
         sortById();
-    }, [])
+    }, []);
 
     return (
-        <div className="container">
+        <div>
             <h1>Users Table</h1>
-            <table className="users-table table-info">
-                <thead>
-                    <tr >
-                        <th className="table-headers">
-                            <p onClick={e => sortById(e) } className="id-icon-dir-top" >Id</p>
-                            <input onChange={e => searchByColumn(e)} data-userinfo='id' type="text" placeholder="Serarch by" />
-                        </th>
-                        <th className="table-headers">
-                            <p>FirstName</p>
-                            <input onChange={e => searchByColumn(e)} data-userinfo='firstName' type="text" placeholder="Serarch by" />
-                        </th>
-                        <th className="table-headers">
-                            <p>LastName</p>
-                            <input onChange={e => searchByColumn(e)} data-userinfo='lastName' type="text" placeholder="Serarch by" />
-                        </th>
-                        <th className="table-headers">
-                            <p>Email</p>
-                            <input onChange={e => searchByColumn(e)} data-userinfo='email' type="text" placeholder="Serarch by" />
-                        </th>
-                        <th className="table-headers">
-                            <p>Phone</p>
-                            <input onChange={e => searchByColumn(e)} data-userinfo='phone' type="text" placeholder="Serarch by" />
-                        </th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {
-                        sortedData.map((item : IUser) => (
-                            <tr key={item.id} className='users-table-row'>
-                                <td>{item.id}</td>
-                                <td>{item.firstName}</td>
-                                <td>{item.lastName}</td>
-                                <td>{item.email}</td>
-                                <td>{item.phone}</td>
-                            </tr>
-                        )) 
-                    }
-                </tbody>
+            <table>
+                {
+                    <TableHead searchByColumn={searchByColumn} sortById={sortById} />
+                }
+                {
+                    <TableBody sortedData={sortedData} isLoading={isLoading} />
+                }
             </table>
+            {show && <div>dtgyhjfg {user?.lastName}</div>}
+            <Pagination
+                nPages = { nPages }
+                currentPage = { currentPage } 
+                setCurrentPage = { setCurrentPage }
+            />
         </div>
     )
 }

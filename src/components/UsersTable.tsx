@@ -6,9 +6,7 @@ import { IUser } from "./../model";
 const UsersTable : React.FC = () => {
 
     const [sortedData, setSortedData] = useState<IUser[]>(data);
-    const [originalData, setOriginalData] = useState<IUser[]>(data);
     const [sortByDesc, setSortByDesc] = useState<boolean>(true);
-    const [searchInpVal, setSeaarchInpVal] = useState<string>('');
 
     let sortById = (e? : React.MouseEvent) : void => {
         const clickedEl = e?.target as HTMLTableCellElement;
@@ -22,20 +20,19 @@ const UsersTable : React.FC = () => {
 
         let searchedInput : string = changedEl.value?.trim().toLowerCase();
         let getByColumn : string = changedEl.dataset['userinfo'] || '';
-        setSeaarchInpVal(searchedInput);
 
         if (searchedInput) {
             //console.log(sortedData[0][getByColumn as keyof typeof sortedData[0]]);
-            if (searchedInput.length < 1) {
-                setSortedData(originalData)
+            console.log(searchedInput);
+            if (searchedInput.length <= 1) {
+                setSortedData(data)
             } else {
                 setSortedData([...sortedData.filter((user : IUser) => {
-                    return user[getByColumn as keyof typeof user].toString().indexOf(searchedInput) >= 0
+                    return user[getByColumn as keyof typeof user].toString().toLowerCase().indexOf(searchedInput) >= 0
                 })]);
             }
         }
     }
-
     useEffect(() => {
         sortById();
     }, [])
@@ -48,23 +45,23 @@ const UsersTable : React.FC = () => {
                     <tr >
                         <th className="table-headers">
                             <p onClick={e => sortById(e) } className="id-icon-dir-top" >Id</p>
-                            <input onChange={e => searchByColumn(e)}  data-userinfo='id' type="text" placeholder="Serarch by" />
+                            <input onChange={e => searchByColumn(e)} data-userinfo='id' type="text" placeholder="Serarch by" />
                         </th>
                         <th className="table-headers">
                             <p>FirstName</p>
-                            <input onChange={e => searchByColumn(e)}  data-userinfo='firstName' type="text" placeholder="Serarch by" />
+                            <input onChange={e => searchByColumn(e)} data-userinfo='firstName' type="text" placeholder="Serarch by" />
                         </th>
                         <th className="table-headers">
                             <p>LastName</p>
-                            <input data-userinfo='lastName' type="text" placeholder="Serarch by" />
+                            <input onChange={e => searchByColumn(e)} data-userinfo='lastName' type="text" placeholder="Serarch by" />
                         </th>
                         <th className="table-headers">
                             <p>Email</p>
-                            <input data-userinfo='email' type="text" placeholder="Serarch by" />
+                            <input onChange={e => searchByColumn(e)} data-userinfo='email' type="text" placeholder="Serarch by" />
                         </th>
                         <th className="table-headers">
                             <p>Phone</p>
-                            <input data-userinfo='phone' type="text" placeholder="Serarch by" />
+                            <input onChange={e => searchByColumn(e)} data-userinfo='phone' type="text" placeholder="Serarch by" />
                         </th>
                     </tr>
                 </thead>
@@ -76,7 +73,7 @@ const UsersTable : React.FC = () => {
                                 <td>{item.firstName}</td>
                                 <td>{item.lastName}</td>
                                 <td>{item.email}</td>
-                                <td>{item.phone}</td>            
+                                <td>{item.phone}</td>
                             </tr>
                         )) 
                     }

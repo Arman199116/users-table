@@ -25,3 +25,17 @@ th {
     display: flex;
     flex-direction: column;
 }
+
+.errorMessage {
+    color: red;
+}
+
+.form-add {
+    display: flex;
+    flex-direction: column;
+}
+.form-add input {
+    width: 200px;
+    margin: 5px 0;
+}
+

@@ -11,9 +11,9 @@ const CurrentUser : React.FC = () => {
         return (
             <div className="current-user">
                 Selected user: <b>{user.firstName}</b>
-                Address: <b>{user.address.streetAddress}</b>
-                City: <b>{user.address.city}</b>
-                Province/St: <b>{user.address.state}</b>
+                Address: <b>{user.address?.streetAddress}</b>
+                City: <b>{user.address?.city}</b>
+                Province/St: <b>{user.address?.state}</b>
             </div>
         );
     }

@@ -4,13 +4,13 @@ export interface IUser {
     lastName : string;
     email : string;
     phone : string;
-    address : {
-        streetAddress : string;
-        city : string;
+    address ?: {
+        streetAddress : string ;
+        city : string ;
         state : string;
         zip : string;
     },
-    description : string;
+    description ?: string;
 }
 
 export interface ITHead {
@@ -27,4 +27,11 @@ export interface IPagin {
 export interface ITable {
     sortedData : IUser[];
     isLoading : boolean;
+}
+
+export interface IFormValues {
+    fname : string;
+    lname : string;
+    email : string;
+    phone : string;
 }

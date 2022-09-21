@@ -8,8 +8,8 @@ const TableBody : React.FC<ITable> = ({sortedData , isLoading} ) => {
     let dispatch = useDispatch();
     const prevUser : IUser = useSelector(selectCurrentUser);
     if (isLoading) {
-        return <div>Loading...</div>
-    }
+        return <tbody><tr><td>Loading...</td></tr></tbody>
+    }    
 
     let handleShow = (user : IUser) => {
         if (prevUser.id !== user.id) {

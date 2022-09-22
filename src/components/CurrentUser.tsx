@@ -10,10 +10,12 @@ const CurrentUser : React.FC = () => {
     if (show) {
         return (
             <div className="current-user">
-                Selected user: <b>{user.firstName}</b>
-                Address: <b>{user.address?.streetAddress}</b>
-                City: <b>{user.address?.city}</b>
-                Province/St: <b>{user.address?.state}</b>
+                <p>Selected user: <b>{user.firstName}</b></p> 
+                <p>Address: <b>{user.address?.streetAddress}</b></p>
+                <p>City: <b>{user.address?.city}</b></p>
+                <p>Province/St: <b>{user.address?.state}</b></p>
+                
+                
             </div>
         );
     }

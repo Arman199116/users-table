@@ -15,7 +15,7 @@ const userState = createSlice({
     },
 
     reducers : {
-        showCurrentUser : (state, action) => {
+        showCurrentUser : (state : any, action : any) => {
             switch (action.payload.type) {
                 case 'SHOW':
                     return {

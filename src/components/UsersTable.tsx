@@ -7,7 +7,6 @@ import { IUser } from "./../model";
 import TableBody from './TableBody';
 import TableHead from './TableHead';
 import Pagination from './Pagination';
-import CurrentUser from './CurrentUser';
 import axios from 'axios';
 import AddNewUser from "./../components/AddNewUser";
 
@@ -81,6 +80,7 @@ const UsersTable : React.FC = () => {
                 <TableBody users={ currentUsers.currentPage } loading={loading} />
    
             </table>
+
             <Pagination
                 nPages={nPages}
                 currentPage={currentPage}

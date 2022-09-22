@@ -18,8 +18,10 @@ const UsersTable : React.FC = () => {
     const [users, setUsers] = useState<IUser[]>([]);
     const [loading, setLoading] = useState<boolean>(false);
     const [sort, setSort] = useState<boolean>(false);
+    const [search, setSearch] = useState<{searchedInput : string, getByColumn : string }>({searchedInput : '', getByColumn : '' });
     const [currentPage, setCurrentPage] = useState<number>(1);
-    const [userPerPage, setUserPerPage] = useState<number>(10);
+    const [userPerPage, _] = useState<number>(10);
+    const [showForm, setShowForm] = useState<boolean>(true);
     
 
     useEffect(() => {
@@ -38,22 +40,33 @@ const UsersTable : React.FC = () => {
         }
         fetchUsers();
     }, []);
-
+    // pagination 
     const indexOfLastUsers = currentPage * userPerPage;
     const indexOfFirstUsers = indexOfLastUsers - userPerPage;
     const nPages = Math.ceil(users.length / userPerPage);
     
-    let currentUsers = {
-        currentPage : users.slice(indexOfFirstUsers, indexOfLastUsers).sort((a : IUser , b : IUser) => sort ? a.id - b.id : b.id - a.id )
+    let currentUsers : any = {};
+    currentUsers['currentPage'] = users.slice(indexOfFirstUsers, indexOfLastUsers).sort((a : IUser , b : IUser) => sort ? a.id - b.id : b.id - a.id )
+    
+    if (search.searchedInput.length > 1) {  
+        currentUsers['currentPage'] = users.filter((user : any) => {
+            return user[search.getByColumn as keyof typeof user].toString().toLowerCase().indexOf(search.searchedInput) >= 0
+        });
     }
-
-    const [showForm, setShowForm] = useState<boolean>(true);
 
     let sortById = (e : React.MouseEvent) : void => {
         const clickedEl = e.target as HTMLTableCellElement;
         clickedEl.classList.toggle('id-icon-dir-down');
         setSort((p : any) => !p);
     }
+
+    let searchByColumn = (e : React.ChangeEvent) : void => {
+        const changedEl = e.target as HTMLInputElement;
+        let searchedInput : string = changedEl.value?.trim().toLowerCase();
+        let getByColumn : string = changedEl.dataset['userinfo'] || '';
+
+        setSearch({searchedInput, getByColumn});
+    };
 
     return (
         <div>
@@ -64,7 +77,7 @@ const UsersTable : React.FC = () => {
             }
             <table>
     
-                <TableHead sortById={sortById}  />
+                <TableHead sortById={sortById} searchByColumn={searchByColumn}  />
                 <TableBody users={ currentUsers.currentPage } loading={loading} />
    
             </table>

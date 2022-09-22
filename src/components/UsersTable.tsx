@@ -16,14 +16,12 @@ const UsersTable : React.FC = () => {
     //let users : IUser[] = useSelector(selectData);
 
     const [users, setUsers] = useState<IUser[]>([]);
-    const [usersClone, setUsersClone] = useState<IUser[]>([]);
     const [loading, setLoading] = useState<boolean>(false);
-    const [sortByDesc, setSortByDesc] = useState<boolean>(false);
+    const [sort, setSort] = useState<boolean>(false);
     const [currentPage, setCurrentPage] = useState<number>(1);
     const [userPerPage, setUserPerPage] = useState<number>(10);
     
 
-    
     useEffect(() => {
         let fetchUsers = async() => {
             
@@ -44,19 +42,17 @@ const UsersTable : React.FC = () => {
     const indexOfLastUsers = currentPage * userPerPage;
     const indexOfFirstUsers = indexOfLastUsers - userPerPage;
     const nPages = Math.ceil(users.length / userPerPage);
-    const currentUsers = useRef<any>();
-    currentUsers.current = users.slice(indexOfFirstUsers, indexOfLastUsers)
+    
+    let currentUsers = {
+        currentPage : users.slice(indexOfFirstUsers, indexOfLastUsers).sort((a : IUser , b : IUser) => sort ? a.id - b.id : b.id - a.id )
+    }
 
     const [showForm, setShowForm] = useState<boolean>(true);
 
-    let sortById = (e? : React.MouseEvent) : void => {
-        const clickedEl = e?.target as HTMLTableCellElement;
-
-        setUsersClone(currentUsers.current.sort((a : IUser , b : IUser) => sortByDesc ? a.id - b.id : b.id - a.id ))
-        setSortByDesc(!sortByDesc);
-        currentUsers.current = [...currentUsers.current.sort((a : IUser , b : IUser) => sortByDesc ? a.id - b.id : b.id - a.id )]
-        clickedEl?.classList.toggle('id-icon-dir-down');
-
+    let sortById = (e : React.MouseEvent) : void => {
+        const clickedEl = e.target as HTMLTableCellElement;
+        clickedEl.classList.toggle('id-icon-dir-down');
+        setSort((p : any) => !p);
     }
 
     return (
@@ -68,8 +64,8 @@ const UsersTable : React.FC = () => {
             }
             <table>
     
-                    <TableHead sortById={sortById}  />
-                    <TableBody users={ currentUsers.current } loading={loading} />
+                <TableHead sortById={sortById}  />
+                <TableBody users={ currentUsers.currentPage } loading={loading} />
    
             </table>
             <Pagination

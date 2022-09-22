@@ -15,7 +15,7 @@ export interface IUser {
 
 export interface ITHead {
     sortById : (e : React.MouseEvent) => void;
-    searchByColumn : (e : React.ChangeEvent) => void;
+    //searchByColumn : (e : React.ChangeEvent) => void;
 }
 
 export interface IPagin {
@@ -25,8 +25,8 @@ export interface IPagin {
 }
 
 export interface ITable {
-    sortedData : IUser[];
-    isLoading : boolean;
+    users : IUser[];
+    loading : boolean;
 }
 
 export interface IFormValues {

@@ -10,7 +10,8 @@ const userState = createSlice({
         currentUser : {},
         show : false,
         showForm : true,
-        data : []
+        data : [],
+        currentPage : []
     },
 
     reducers : {
@@ -41,7 +42,12 @@ const userState = createSlice({
                 case 'UPDATE':
                     return {
                         ...state,
-                       data : state.data.unshift( action.payload.user )
+                       data : action.payload.data
+                    }
+                case 'CURRENT_PAGE':
+                    return {
+                        ...state,
+                        currentPage : action.payload.currentPage
                     }
                
                 default:
@@ -50,9 +56,10 @@ const userState = createSlice({
         },
     }
 })
-//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
+//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
 
 export const selectCurrentUser = (state : any) => state.currentUser;
+export const selectCurrentPage = (state : any) => state.currentPage;
 export const selectShow = (state : any) => state.show;
 export const selectShowForm = (state : any) => state.showForm;
 export const selectData = (state : any) => state.data;

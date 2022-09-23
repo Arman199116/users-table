@@ -2,7 +2,7 @@ import React from 'react'
 import { IPagin } from '../model'
 
 const Pagination : React.FC<IPagin> = ({nPages, currentPage, setCurrentPage}) => {
-    const pageNumbers : any = Array.from(Array(nPages + 1).keys()).slice(1);
+    const pageNumbers : number[] = Array.from(Array(nPages + 1).keys()).slice(1);
     const nextPage = () => {
         if(currentPage !== nPages) 
             setCurrentPage(currentPage + 1)

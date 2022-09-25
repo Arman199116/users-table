@@ -1,22 +1,12 @@
-import React, {useState, useEffect, useRef, useMemo} from 'react'
+import React, {useState} from 'react'
 import { IFormValues, IUser } from '../model';
 import validate, { getRandomInt } from './functions/validate';
-//import { users } from "./../users/users";
-import { useSelector, useDispatch} from "react-redux";
-import { selectData, newData } from "./../redux/stor";
 
 const AddNewUser : React.FC<any> = ({setShowForm, setUsers, users }) => {
 
-    //let users : any = useSelector(selectData);
-    let dispatch = useDispatch();
-
-    const [formErrors, setFormError] = useState<IFormValues>({fname : '', lname : '', email : '', phone : ''});
-    
+    const [formErrors, setFormErrors] = useState<IFormValues>({fname : '', lname : '', email : '', phone : ''});
     const [formData, setFormData] = useState<IFormValues>({fname : '', lname : '', email : '', phone : ''});
-    const [add, setAdd] = useState<boolean>(false);
-    let setFormErrors = useMemo(() => setFormError, [add]);
-   
-    let formRef = useRef<any>();
+
 
     let handleInputValues = (e : React.ChangeEvent) => {
         e.preventDefault();
@@ -60,23 +50,25 @@ const AddNewUser : React.FC<any> = ({setShowForm, setUsers, users }) => {
                 description : 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nisi, dolorum!'
             }
             setUsers([formValues, ...users]);
+
             setShowForm((p : boolean) => !p);
         }
     }
-    
+
     return (
-        <form ref={formRef} onSubmit={e => { handleAdd(e) }} className='form-add'>
-            <input onChange={e => handleInputValues(e)} type="text" name="fname"/>
+        <form onSubmit={e => { handleAdd(e) }} className='form-add'>
+            <input onChange={e => handleInputValues(e)} type="text" name="fname" placeholder='firstname' />
             <small className="errorMessage" style={{display : formErrors.fname ? 'block' : 'none'}}>{formErrors.fname}</small>
-            <input onChange={e => handleInputValues(e)} type="text" name="lname"/>
+            <input onChange={e => handleInputValues(e)} type="text" name="lname" placeholder='lastname' />
             <small className="errorMessage" style={{display : formErrors.lname ? 'block' : 'none'}}>{formErrors.lname}</small>
-            <input onChange={e => handleInputValues(e)} type="text" name="email"/>
+            <input onChange={e => handleInputValues(e)} type="text" name="email" placeholder='email' />
             <small className="errorMessage" style={{display : formErrors.email ? 'block' : 'none'}}>{formErrors.email}</small>
-            <input onChange={e => handleInputValues(e)} type="text" name="phone"/>
+            <input onChange={e => handleInputValues(e)} type="text" name="phone" placeholder='phone' />
             <small className="errorMessage" style={{display : formErrors.phone ? 'block' : 'none'}}>{formErrors.phone}</small>
-            <input onChange={e => handleInputValues(e)} type="submit" className="btn btn-primary" value='Submit' />
+            <input type="submit" className="btn btn-primary" value='Submit' />
+            <input onClick={e => setShowForm((p : boolean) => !p)} type="button" className="btn btn-danger" value='Cancle' />
         </form>
-            
+
     )
 }
 

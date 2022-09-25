@@ -35,3 +35,11 @@ export interface IFormValues {
     email : string;
     phone : string;
 }
+
+export interface IUserState {
+    data : IUser[];
+    currentUser : IUser;
+    show : boolean;
+    status : string | null;
+    error : string | null;
+}

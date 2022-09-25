@@ -2,20 +2,23 @@ import React from 'react'
 import { IPagin } from '../model'
 
 const Pagination : React.FC<IPagin> = ({nPages, currentPage, setCurrentPage}) => {
-    const pageNumbers : number[] = Array.from(Array(nPages + 1).keys()).slice(1);
+    const pageNumbers : number[] = [];
+    for (let i = 0; i < nPages; i++) {
+        pageNumbers[i] = i + 1;
+    }
     const nextPage = () => {
-        if(currentPage !== nPages) 
+        if(currentPage < nPages)
             setCurrentPage(currentPage + 1)
     }
     const prevPage = () => {
-        if(currentPage !== 1) 
+        if(currentPage !== 1)
             setCurrentPage(currentPage - 1)
     }
     return (
         <nav>
             <ul className="pagination justify-content-center mt-6">
                 <li className="page-item">
-                    <a className="page-link" 
+                    <a className="page-link"
                         onClick={e => prevPage()}
                     >
                         Previus
@@ -24,7 +27,7 @@ const Pagination : React.FC<IPagin> = ({nPages, currentPage, setCurrentPage}) =>
                 {
                     pageNumbers.map((pgNumber : any) => (
                         <li key={pgNumber}
-                            className={`page-item ${currentPage == pgNumber ? 'active' : ''}`}
+                            className={`page-item ${currentPage === pgNumber ? 'active' : ''}`}
                         >
                             <a className="page-link"
                                 onClick={e => setCurrentPage(pgNumber)}
@@ -36,7 +39,7 @@ const Pagination : React.FC<IPagin> = ({nPages, currentPage, setCurrentPage}) =>
                 }
 
                 <li className="page-item">
-                    <a className="page-link" 
+                    <a className="page-link"
                         onClick={e => nextPage()}
                     >
                         Next

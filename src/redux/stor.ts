@@ -1,21 +1,44 @@
-import { configureStore, createSlice } from '@reduxjs/toolkit';
-import {IUser} from './../model'
+import { configureStore, createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit';
+import axios from 'axios';
+import { IUserState, IUser } from './../model'
 
 //import { current } from '@reduxjs/toolkit'
 
+export const fetchData : any = createAsyncThunk(
+    'user/fetchData',
+    async function fetch() {
+        const res = await axios.get('http://www.filltext.com/?rows=172&id={number%7C1000}&firstName={firstName}&lastName={lastName}&email={email}&phone={phone%7C(xxx)xxx-xx-xx}&address={addressObject}&description={lorem%7C32}')
+        return {data : res.data};
+    }
+);
+
+const initialState : IUserState = {
+        data : [],
+        currentUser : {
+            id : 0,
+            firstName : '',
+            lastName : '',
+            email : '',
+            phone : '',
+            address : {
+                streetAddress : '',
+                city : '',
+                state : '',
+                zip : '',
+            },
+            description : '',
+        },
+        show : false,
+        status : null,
+        error : null,
+}
+
 const userState = createSlice({
     name : "user",
-
-    initialState : {
-        currentUser : {},
-        show : false,
-        showForm : true,
-        data : [],
-        currentPage : []
-    },
+    initialState : initialState,
 
     reducers : {
-        showCurrentUser : (state : any, action : any) => {
+        showCurrentUser : (state : IUserState, action : PayloadAction<{type: string; user: IUser; show: boolean;} >) => {
             switch (action.payload.type) {
                 case 'SHOW':
                     return {
@@ -23,52 +46,37 @@ const userState = createSlice({
                         show : action.payload.show,
                         currentUser : {...action.payload.user}
                     }
-                case 'SHOW_FORM':
-                    return {
-                        ...state,
-                        showForm : action.payload.show
-                    }
                 default:
                     break;
             }
         },
-        newData : (state : any, action : any) => {
-            switch (action.payload.type) {
-                case 'ADD':
-                    return {
-                        ...state,
-                        data : action.payload.data,
-                    }
-                case 'UPDATE':
-                    return {
-                        ...state,
-                       data : action.payload.data
-                    }
-                case 'CURRENT_PAGE':
-                    return {
-                        ...state,
-                        currentPage : action.payload.currentPage
-                    }
-               
-                default:
-                    break;
-            }
+    },
+    extraReducers : {
+        [fetchData.pending] : (state : any, action : any) => {
+            state.user.status = 'loading';
+            state.user.error = null;
         },
+        [fetchData.fulfilled] : (state : any, action : any) => {
+            state.user.status = 'resolved';
+            state.user.data = action.payload.data;
+        },
+        [fetchData.rejected] : (state : any, action : any) => {},
     }
 })
 //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
 
-export const selectCurrentUser = (state : any) => state.currentUser;
-export const selectCurrentPage = (state : any) => state.currentPage;
-export const selectShow = (state : any) => state.show;
-export const selectShowForm = (state : any) => state.showForm;
-export const selectData = (state : any) => state.data;
-export const { showCurrentUser, newData } = userState.actions;
+export const selectCurrentUser = (state : {user : IUserState}) => state.user.currentUser;
+export const selectShow = (state : {user : IUserState}) => state.user.show;
+export const { showCurrentUser } = userState.actions;
 const store = configureStore({
-    reducer : userState.reducer,
+    reducer : {
+        user : userState.reducer,
+    },
     middleware: (getDefaultMiddleware) => getDefaultMiddleware({
         serializableCheck: false,
     })
 });
+
+export type AppDispatch = typeof store.dispatch;
 export type RootState = ReturnType<typeof store.getState>
 export default store;

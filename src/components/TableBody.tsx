@@ -1,28 +1,28 @@
 import React from 'react';
-import { useDispatch, useSelector, connect } from "react-redux";
-import { showCurrentUser, selectCurrentUser, selectCurrentPage} from './../redux/stor';
+import { useAppSelector, useAppDispatch } from "./../redux/hooks";
+import { showCurrentUser, selectCurrentUser } from './../redux/stor';
 import { ITable, IUser } from "./../model";
-//import { createSelector } from 'reselect';
 
 
 const TableBody : React.FC<ITable> = ({users, loading}) => {
-    let prevUser : IUser = useSelector(selectCurrentUser);
-    let dispatch = useDispatch();
+    let prevUser : IUser = useAppSelector(selectCurrentUser);
+    let dispatch = useAppDispatch();
 
     if (loading) {
-        return  <tbody><tr><td>Loading...</td></tr></tbody>
+        return  <tbody><td>Loading...</td></tbody>
     }
+
     let currentUserFn = (user : IUser) => {
         if (prevUser?.id !== user.id) {
             dispatch(showCurrentUser({type : 'SHOW', user : user, show : true}))
         }
     }
-     
+
     return (
         <tbody>
             {
                 users.map((user : IUser) => (
-                    <tr key={user.id} className='users-table-row' onClick={e => currentUserFn( user ) } >
+                    <tr key={user.id} className='users-table-row' onClick={e => currentUserFn( user )} >
                         <td>{user.id}</td>
                         <td>{user.firstName}</td>
                         <td>{user.lastName}</td>
@@ -35,18 +35,5 @@ const TableBody : React.FC<ITable> = ({users, loading}) => {
     )
 }
 
-
-// let getChartValue = createSelector([ selectCurrentPage ], ( currentPage ) => {
-//     return {
-//         currentPage
-//     };
-// });
-// const mapStateToProps = (state : any) => {
-//     const { currentPage } = getChartValue(state);
-//     return {
-//         users : currentPage
-//     }
-// }
-
-export default TableBody
+export default React.memo(TableBody);
 

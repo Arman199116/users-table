@@ -1,12 +1,12 @@
 import React from "react";
 import { IUser } from "./../model";
-import { useSelector } from "react-redux";
+import { useAppSelector } from "./../redux/hooks";
 import { selectShow, selectCurrentUser } from "./../redux/stor";
 
 const CurrentUser : React.FC = () => {
     // show current user
-    const show : boolean = useSelector(selectShow);
-    const user : IUser = useSelector(selectCurrentUser);
+    const show : boolean = useAppSelector(selectShow);
+    const user : IUser = useAppSelector(selectCurrentUser);
     if (show) {
         return (
             <div className="current-user">
@@ -14,8 +14,6 @@ const CurrentUser : React.FC = () => {
                 <p>Address: <b>{user.address?.streetAddress}</b></p>
                 <p>City: <b>{user.address?.city}</b></p>
                 <p>Province/St: <b>{user.address?.state}</b></p>
-                
-                
             </div>
         );
     }

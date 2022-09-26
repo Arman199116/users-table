@@ -5,15 +5,13 @@ import TableBody from './TableBody';
 import TableHead from './TableHead';
 import Pagination from './Pagination';
 import AddNewUser from "./../components/AddNewUser";
-import { a } from "./data";
-import { fetchData, selectData } from "./../redux/stor";
+//import { fetchData, selectData } from "./../redux/stor";
 import { useAppSelector, useAppDispatch } from "./../redux/hooks";
-import { useGetPostsQuery } from '../redux/apiSlice';
+import { useGetUsersQuery } from '../redux/apiSlice';
 
 const UsersTable : React.FC = () => {
 
-    const { data = [], isLoading, error }  = useGetPostsQuery();
-console.count('err');
+    const { data = [], isLoading, error }  = useGetUsersQuery();
 
     let dispatch = useAppDispatch();
     //let data = useAppSelector(selectData);
@@ -29,9 +27,9 @@ console.count('err');
     // useEffect(() => {
     //     dispatch(fetchData());
     // }, []);
-    // useEffect(() => {
-    //    setUsers(data);
-    // }, [data]);
+    useEffect(() => {
+       setUsers(data);
+    }, [data]);
 
     const indexOfLastUsers = currentPage * userPerPage;
     const indexOfFirstUsers = indexOfLastUsers - userPerPage;

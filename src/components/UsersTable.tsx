@@ -1,53 +1,42 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import "./styles/style.css";
 import { IUser } from "./../model";
 import TableBody from './TableBody';
 import TableHead from './TableHead';
 import Pagination from './Pagination';
-import axios from 'axios';
 import AddNewUser from "./../components/AddNewUser";
 import { a } from "./data";
-import { fetchData } from "./../redux/stor";
+import { fetchData, selectData } from "./../redux/stor";
 import { useAppSelector, useAppDispatch } from "./../redux/hooks";
+import { useGetPostsQuery } from '../redux/apiSlice';
 
 const UsersTable : React.FC = () => {
 
-    let dispatch = useAppDispatch();
+    const { data = [], isLoading, error }  = useGetPostsQuery();
+console.count('err');
 
-    const [users, setUsers] = useState<IUser[]>(a);
-    const [loading, setLoading] = useState<boolean>(false);
+    let dispatch = useAppDispatch();
+    //let data = useAppSelector(selectData);
+
+    const [users, setUsers] = useState<IUser[]>(data);
     const [sort, setSort] = useState<boolean>(false);
     const [search, setSearch] = useState<{searchedInput : string, getByColumn : string }>({searchedInput : '', getByColumn : '' });
     const [currentPage, setCurrentPage] = useState<number>(1);
     const [userPerPage] = useState<number>(15);
     const [showForm, setShowForm] = useState<boolean>(true);
 
-    // useEffect(() => {
-    //     let fetchUsers = async() => {
-    //         try {
-    //             setLoading(true);
-    //             let res = await axios.get('http://www.filltext.com/?rows=172&id={number%7C1000}&firstName={firstName}&lastName={lastName}&email={email}&phone={phone%7C(xxx)xxx-xx-xx}&address={addressObject}&description={lorem%7C32}');
-    //             setUsers(res.data);
-    //             setLoading(false);
-    //         } catch (error) {
-    //             console.error(error);
-    //         }
-    //     }
-    //     fetchUsers();
-    // }, []);
-    // pagination
 
-    useEffect(() => {
-        console.log(111);
-        
-        dispatch(fetchData());
-        console.log(2222);
-    }, [dispatch]);
+    // useEffect(() => {
+    //     dispatch(fetchData());
+    // }, []);
+    // useEffect(() => {
+    //    setUsers(data);
+    // }, [data]);
 
     const indexOfLastUsers = currentPage * userPerPage;
     const indexOfFirstUsers = indexOfLastUsers - userPerPage;
 
-    const nPages = Math.ceil(users.length / userPerPage);
+    const nPages = Math.ceil(data.length / userPerPage);
 
     let currentUsers : any = {};
     currentUsers['currentPages'] = users.slice(indexOfFirstUsers, indexOfLastUsers).sort((a : IUser , b : IUser) => sort ? a.id - b.id : b.id - a.id )
@@ -72,6 +61,9 @@ const UsersTable : React.FC = () => {
         setSearch({searchedInput, getByColumn});
     };
 
+    let head = useMemo(() => <TableHead sortById={sortById} searchByColumn={searchByColumn}  />, []);
+    let body = useMemo(() => <TableBody users={ currentUsers.currentPages } isLoading={isLoading} error={error}  /> , [currentUsers.currentPages, isLoading, error]);
+
     return (
         <div>
             <h1>Users Table</h1>
@@ -80,8 +72,8 @@ const UsersTable : React.FC = () => {
                 : <AddNewUser setShowForm={setShowForm} setUsers={setUsers} users={users} />
             }
             <table>
-                <TableHead sortById={sortById} searchByColumn={searchByColumn}  />
-                <TableBody users={ currentUsers.currentPages } loading={loading} />
+                {head}
+                {body}
             </table>
 
             <Pagination
@@ -93,4 +85,4 @@ const UsersTable : React.FC = () => {
     )
 }
 
-export default UsersTable;
+export default React.memo(UsersTable);

@@ -1,14 +1,21 @@
 import { configureStore, createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit';
-import axios from 'axios';
-import { IUserState, IUser } from './../model'
-
+import { IUserState, IUser } from './../model';
+import { apiSlice } from './apiSlice';
 //import { current } from '@reduxjs/toolkit'
 
 export const fetchData : any = createAsyncThunk(
     'user/fetchData',
-    async function fetch() {
-        const res = await axios.get('http://www.filltext.com/?rows=172&id={number%7C1000}&firstName={firstName}&lastName={lastName}&email={email}&phone={phone%7C(xxx)xxx-xx-xx}&address={addressObject}&description={lorem%7C32}')
-        return {data : res.data};
+    async function(_, {rejectWithValue}) {
+        try {
+            let res : any = await fetch('http://www.filltext.com/?rows=20&id={number%7C1000}&firstName={firstName}&lastName={lastName}&email={email}&phone={phone%7C(xxx)xxx-xx-xx}&address={addressObject}&description={lorem%7C32}')
+            if(!res.ok) {
+                throw new Error("Server Error");
+            }
+            let data = await res.json();
+            return {data : data};
+        } catch (error : any) {
+            return rejectWithValue(error.message);
+        }
     }
 );
 
@@ -52,29 +59,40 @@ const userState = createSlice({
         },
     },
     extraReducers : {
-        [fetchData.pending] : (state : any, action : any) => {
-            state.user.status = 'loading';
-            state.user.error = null;
+        [fetchData.pending] : (state : IUserState) => {
+            state.status = 'loading';
+            state.error = null;
         },
-        [fetchData.fulfilled] : (state : any, action : any) => {
-            state.user.status = 'resolved';
-            state.user.data = action.payload.data;
+        [fetchData.fulfilled] : (state : IUserState, action : PayloadAction<any>) => {
+            return {
+                ...state,
+                status : 'resolved',
+                data : action.payload.data,
+                error : null,
+            }
         },
-        [fetchData.rejected] : (state : any, action : any) => {},
+        [fetchData.rejected] : (state : IUserState, action : PayloadAction<any>) => {
+            state.error = action.payload;
+            state.status = 'rejected';
+        },
     }
 })
-//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
+//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
 
 export const selectCurrentUser = (state : {user : IUserState}) => state.user.currentUser;
+export const selectData = (state : {user : IUserState}) => state.user.data;
+export const selectStatus = (state : {user : IUserState}) => state.user.status;
+export const selectError = (state : {user : IUserState}) => state.user.error;
 export const selectShow = (state : {user : IUserState}) => state.user.show;
 export const { showCurrentUser } = userState.actions;
 const store = configureStore({
     reducer : {
         user : userState.reducer,
+        [apiSlice.reducerPath] : apiSlice.reducer
     },
     middleware: (getDefaultMiddleware) => getDefaultMiddleware({
         serializableCheck: false,
-    })
+    }).concat(apiSlice.middleware)
 });
 
 export type AppDispatch = typeof store.dispatch;

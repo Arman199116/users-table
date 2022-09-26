@@ -1,9 +1,10 @@
 import React, {useState} from 'react'
 import { IFormValues, IUser } from '../model';
+import { useAppDispatch } from '../redux/hooks';
 import validate, { getRandomInt } from './functions/validate';
 
 const AddNewUser : React.FC<any> = ({setShowForm, setUsers, users }) => {
-
+    let dispatch = useAppDispatch();
     const [formErrors, setFormErrors] = useState<IFormValues>({fname : '', lname : '', email : '', phone : ''});
     const [formData, setFormData] = useState<IFormValues>({fname : '', lname : '', email : '', phone : ''});
 
@@ -50,7 +51,6 @@ const AddNewUser : React.FC<any> = ({setShowForm, setUsers, users }) => {
                 description : 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nisi, dolorum!'
             }
             setUsers([formValues, ...users]);
-
             setShowForm((p : boolean) => !p);
         }
     }

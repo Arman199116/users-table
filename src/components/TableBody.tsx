@@ -1,15 +1,22 @@
 import React from 'react';
 import { useAppSelector, useAppDispatch } from "./../redux/hooks";
-import { showCurrentUser, selectCurrentUser } from './../redux/stor';
+import { showCurrentUser, selectCurrentUser, selectStatus, selectError } from './../redux/stor';
 import { ITable, IUser } from "./../model";
 
 
-const TableBody : React.FC<ITable> = ({users, loading}) => {
+const TableBody : React.FC<ITable> = ({users, isLoading, error}) => {
     let prevUser : IUser = useAppSelector(selectCurrentUser);
+    // let loadingShow = useAppSelector(selectStatus);
+    // let loadingError = useAppSelector(selectError);
+
     let dispatch = useAppDispatch();
 
-    if (loading) {
-        return  <tbody><td>Loading...</td></tbody>
+    if (/*isLoading === 'loading'*/ isLoading) {
+        return  <tbody><tr><td>Loading...</td></tr></tbody>
+    }
+
+    if (/*loadingShow === 'rejected' && loadingError*/ error) {
+        return  <tbody><tr><td>{error.error.toString()}</td></tr></tbody>
     }
 
     let currentUserFn = (user : IUser) => {

@@ -1,4 +1,4 @@
-import { configureStore, createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit';
+import { configureStore, createSlice, PayloadAction, createAsyncThunk, createSelector } from '@reduxjs/toolkit';
 import { IUserState, IUser } from './../model';
 import { apiSlice } from './apiSlice';
 //import { current } from '@reduxjs/toolkit'
@@ -7,7 +7,7 @@ export const fetchData : any = createAsyncThunk(
     'user/fetchData',
     async function(_, {rejectWithValue}) {
         try {
-            let res : any = await fetch('http://www.filltext.com/?rows=20&id={number%7C1000}&firstName={firstName}&lastName={lastName}&email={email}&phone={phone%7C(xxx)xxx-xx-xx}&address={addressObject}&description={lorem%7C32}')
+            let res : any = await fetch('http://www.filltext.com/?rows=50&id={number%7C1000}&firstName={firstName}&lastName={lastName}&email={email}&phone={phone%7C(xxx)xxx-xx-xx}&address={addressObject}&description={lorem%7C32}')
             if(!res.ok) {
                 throw new Error("Server Error");
             }
@@ -59,11 +59,11 @@ const userState = createSlice({
         },
     },
     extraReducers : {
-        [fetchData.pending] : (state : IUserState) => {
+        [fetchData.pending] : (state) => {
             state.status = 'loading';
             state.error = null;
         },
-        [fetchData.fulfilled] : (state : IUserState, action : PayloadAction<any>) => {
+        [fetchData.fulfilled] : (state, action : PayloadAction<{data : IUser[]}>) => {
             return {
                 ...state,
                 status : 'resolved',
@@ -71,7 +71,7 @@ const userState = createSlice({
                 error : null,
             }
         },
-        [fetchData.rejected] : (state : IUserState, action : PayloadAction<any>) => {
+        [fetchData.rejected] : (state, action : PayloadAction<string>) => {
             state.error = action.payload;
             state.status = 'rejected';
         },

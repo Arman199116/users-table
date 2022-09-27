@@ -4,19 +4,19 @@ import { showCurrentUser, selectCurrentUser, selectStatus, selectError } from '.
 import { ITable, IUser } from "./../model";
 
 
-const TableBody : React.FC<ITable> = ({users, isLoading, error}) => {
+const TableBody : React.FC<ITable> = ({users}) => {
     let prevUser : IUser = useAppSelector(selectCurrentUser);
-    // let loadingShow = useAppSelector(selectStatus);
-    // let loadingError = useAppSelector(selectError);
+    let loadingShow = useAppSelector(selectStatus);
+    let error = useAppSelector(selectError);
 
     let dispatch = useAppDispatch();
 
-    if (/*isLoading === 'loading'*/ isLoading) {
+    if (loadingShow === 'loading') {
         return  <tbody><tr><td>Loading...</td></tr></tbody>
     }
 
-    if (/*loadingShow === 'rejected' && loadingError*/ error) {
-        return  <tbody><tr><td>{error.error.toString()}</td></tr></tbody>
+    if (loadingShow === 'rejected' && error) {
+        return  <tbody><tr><td>{error}</td></tr></tbody>
     }
 
     let currentUserFn = (user : IUser) => {

@@ -25,7 +25,7 @@ const Pagination : React.FC<IPagin> = ({nPages, currentPage, setCurrentPage}) =>
                     </a>
                 </li>
                 {
-                    pageNumbers.map((pgNumber : any) => (
+                    pageNumbers.map((pgNumber : number ) => (
                         <li key={pgNumber}
                             className={`page-item ${currentPage === pgNumber ? 'active' : ''}`}
                         >

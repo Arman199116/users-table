@@ -1,10 +1,14 @@
-import React from 'react'
-import { ITHead } from '../model'
+import React from 'react';
+import { ITHead } from '../model';
+import { useAppDispatch } from "./../redux/hooks";
 
 const TableHead : React.FC<ITHead> = ({sortById, searchByColumn}) => {
+
+    let dispatch = useAppDispatch();
+
     return (
         <thead>
-            <tr >
+            <tr>
                 <th className="table-headers">
                     <p onClick={(e : any) => sortById(e)} className="id-icon-dir-top" >Id</p>
                     <input onChange={e => searchByColumn(e)}  data-userinfo='id' type="text" placeholder="Search by .." />

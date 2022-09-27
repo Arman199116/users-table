@@ -5,28 +5,27 @@ import TableBody from './TableBody';
 import TableHead from './TableHead';
 import Pagination from './Pagination';
 import AddNewUser from "./../components/AddNewUser";
-//import { fetchData, selectData } from "./../redux/stor";
+import { fetchData, selectData } from "./../redux/stor";
 import { useAppSelector, useAppDispatch } from "./../redux/hooks";
-import { useGetUsersQuery } from '../redux/apiSlice';
+//import { useGetUsersQuery } from '../redux/apiSlice';
 
-const UsersTable : React.FC = () => {
+const UsersTable : React.FC= () => {
 
-    const { data = [], isLoading, error }  = useGetUsersQuery();
+    //const { data = [], isLoading, error }  = useGetUsersQuery();
 
     let dispatch = useAppDispatch();
-    //let data = useAppSelector(selectData);
+    let data = useAppSelector(selectData);
 
-    const [users, setUsers] = useState<IUser[]>(data);
+    const [users, setUsers] = useState<IUser[]>([]);
     const [sort, setSort] = useState<boolean>(false);
-    const [search, setSearch] = useState<{searchedInput : string, getByColumn : string }>({searchedInput : '', getByColumn : '' });
+    const [search, setSearch] = useState<{searchedInput : string, getByColumn : string}>({searchedInput : '', getByColumn : '' });
     const [currentPage, setCurrentPage] = useState<number>(1);
-    const [userPerPage] = useState<number>(15);
+    const [userPerPage] = useState<number>(18);
     const [showForm, setShowForm] = useState<boolean>(true);
 
-
-    // useEffect(() => {
-    //     dispatch(fetchData());
-    // }, []);
+    useEffect(() => {
+        dispatch(fetchData());
+    }, []);
     useEffect(() => {
        setUsers(data);
     }, [data]);
@@ -37,11 +36,11 @@ const UsersTable : React.FC = () => {
     const nPages = Math.ceil(data.length / userPerPage);
 
     let currentUsers : any = {};
-    currentUsers['currentPages'] = users.slice(indexOfFirstUsers, indexOfLastUsers).sort((a : IUser , b : IUser) => sort ? a.id - b.id : b.id - a.id )
-
+    currentUsers['currentPages'] = users.slice(indexOfFirstUsers, indexOfLastUsers).sort((a : IUser, b : IUser) => sort ? a.id - b.id : b.id - a.id);
+ 
     if (search.searchedInput.length > 1) {
-        currentUsers['currentPages'] = users.filter((user : any) => {
-            return user[search.getByColumn as keyof typeof user].toString().toLowerCase().indexOf(search.searchedInput) >= 0
+        currentUsers['currentPages'] = currentUsers['currentPages'].filter((user : IUser) => {
+            return user[search.getByColumn as keyof IUser].toString().toLowerCase().indexOf(search.searchedInput) >= 0
         });
     }
 
@@ -60,7 +59,7 @@ const UsersTable : React.FC = () => {
     };
 
     let head = useMemo(() => <TableHead sortById={sortById} searchByColumn={searchByColumn}  />, []);
-    let body = useMemo(() => <TableBody users={ currentUsers.currentPages } isLoading={isLoading} error={error}  /> , [currentUsers.currentPages, isLoading, error]);
+    let body = useMemo(() => <TableBody users={ currentUsers.currentPages }  /> , [currentUsers.currentPages]);
 
     return (
         <div>

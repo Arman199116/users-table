@@ -26,8 +26,6 @@ export interface IPagin {
 
 export interface ITable {
     users : IUser[];
-    isLoading : boolean;
-    error : any
 }
 
 export interface IFormValues {

@@ -7,24 +7,21 @@ const AddNewUser : React.FC<any> = ({setShowForm, setUsers, users }) => {
     const [formErrors, setFormErrors] = useState<IFormValues>({fname : '', lname : '', email : '', phone : ''});
     const [formData, setFormData] = useState<IFormValues>({fname : '', lname : '', email : '', phone : ''});
 
-
     let handleInputValues = (e : React.ChangeEvent) => {
         e.preventDefault();
         const changedEl = e.target as HTMLInputElement;
 
         let inputValue = changedEl.value;
         let attrName : string = changedEl.getAttribute('name') || '';
-        let cloneFormData : any = { ...formData };
-        cloneFormData[attrName] = inputValue;
+        let cloneFormData : IFormValues = { ...formData };
+        cloneFormData[attrName as keyof IFormValues] = inputValue;
 
         setFormData(cloneFormData);
     }
 
     let handleAdd = (e : React.FormEvent) => {
         e.preventDefault();
-
         let errors : IFormValues = validate({...formData});
-
         if (users.find((user : IUser) => user.email === formData.email)?.email) {
             errors['email'] = 'Email is used';
         }
@@ -48,7 +45,7 @@ const AddNewUser : React.FC<any> = ({setShowForm, setUsers, users }) => {
                     zip : 'zip'
                 },
                 description : 'Lorem ipsum dolor sit amet, consectetur adipisicing elit. Nisi, dolorum!'
-            }
+            };
             setUsers([formValues, ...users]);
             setShowForm((p : boolean) => !p);
         }

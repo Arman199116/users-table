@@ -35,7 +35,7 @@ const UsersTable : React.FC= () => {
 
     const nPages = Math.ceil(data.length / userPerPage);
 
-    let currentUsers : any = {};
+    let currentUsers : {currentPages : IUser[]} = {currentPages : []};
     currentUsers['currentPages'] = users.slice(indexOfFirstUsers, indexOfLastUsers).sort((a : IUser, b : IUser) => sort ? a.id - b.id : b.id - a.id);
  
     if (search.searchedInput.length > 1) {
